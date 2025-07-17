@@ -27,3 +27,4 @@ for block in mentah:
 data = pd.DataFrame(Hasil)
 data.index = data.index + 1
 print(tabulate(data, headers='keys', tablefmt='grid'))
+
