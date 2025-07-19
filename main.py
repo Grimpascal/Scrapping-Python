@@ -84,9 +84,10 @@ def tokopedia():
     os.system('cls')
     print('=====TOKOPEDIA HARGA SCRAPPING=====')
     namaBarang = input('Masukkan Nama Barang : ')
+    namaBarangSpasi = namaBarang.replace(' ', '%20')
     os.system('cls')
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0 Safari/537.36"}
-    url = f'https://www.tokopedia.com/search?st=&q={namaBarang}&srp_component_id=02.01.00.00&srp_page_id=&srp_page_title=&navsource='
+    url = f'https://www.tokopedia.com/search?st=&q={namaBarangSpasi}&srp_component_id=02.01.00.00&srp_page_id=&srp_page_title=&navsource='
     respon = requests.get(url, headers=headers)
     soup = BeautifulSoup(respon.text, 'html.parser')
 
@@ -109,4 +110,4 @@ def tokopedia():
     utama()
 
 
-utama()
+tokopedia()
