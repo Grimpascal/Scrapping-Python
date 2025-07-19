@@ -110,4 +110,4 @@ def tokopedia():
     utama()
 
 
-tokopedia()
+utama()
