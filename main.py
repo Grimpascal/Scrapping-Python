@@ -10,12 +10,15 @@ def utama():
         os.system('cls')
         print('Ingin melihat data apa')
         print('''1. Data tim hockey
-2. Daftar project github''')
+2. Daftar project github
+3. Daftar harga Tokopedia''')
         pilihan = input('Masukkan pilihan : ')
         if pilihan == '1':
             hockey()
         elif pilihan == '2':
             github()
+        elif pilihan == '3':
+            tokopedia()
         else:
             print('Tidak ada dipilihan!')
             time.sleep(1)
@@ -76,5 +79,34 @@ def github():
     print(tabulate(data, headers='keys', tablefmt='grid'))
     input('TEKAN ENTER UNTUK KEMBALI>>>')
     utama()
+
+def tokopedia():
+    os.system('cls')
+    print('=====TOKOPEDIA HARGA SCRAPPING=====')
+    namaBarang = input('Masukkan Nama Barang : ')
+    os.system('cls')
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0 Safari/537.36"}
+    url = f'https://www.tokopedia.com/search?st=&q={namaBarang}&srp_component_id=02.01.00.00&srp_page_id=&srp_page_title=&navsource='
+    respon = requests.get(url, headers=headers)
+    soup = BeautifulSoup(respon.text, 'html.parser')
+
+    mentah = soup.find_all('div', class_='gG1uA844gIiB2+C3QWiaKA==')
+
+    hasil = []
+    for block in mentah:
+        namaProdukE = block.find('span', class_='+tnoqZhn89+NHUA43BpiJg==')
+        namaProduk = namaProdukE.get_text(strip=True)
+
+        ratingE = block.find('span', class_='_2NfJxPu4JC-55aCJ8bEsyw==')
+        rating = ratingE.get_text(strip=True)
+
+        hasil.append({'nama' : namaProduk, 'rating' : rating})
+    
+    data = pd.DataFrame(hasil)
+    data.index = data.index + 1
+    print(tabulate(data, headers='keys', tablefmt='grid'))
+    input('ENTER UNTUK KEMBALI >>>')
+    utama()
+
 
 utama()
