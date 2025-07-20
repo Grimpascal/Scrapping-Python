@@ -5,6 +5,8 @@ from tabulate import tabulate
 import os
 import time
 
+headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0 Safari/537.36"}
+
 def utama():
     while True:
         os.system('cls')
@@ -55,38 +57,58 @@ def hockey():
 
 def github():
     os.system('cls')
-    url = 'https://github.com/Grimpascal?tab=repositories'
-    respon = requests.get(url)
-    soup = BeautifulSoup(respon.text, 'html.parser')
+    print('=====GITHUB=====')
+    user = input('Masukkan Username : ')
+    url = f'https://github.com/{user}?tab=repositories'
+    
+    try:
+        respon = requests.get(url, headers=headers)
+        soup = BeautifulSoup(respon.text, 'html.parser')
 
-    mentah = soup.find_all('li', class_='col-12 d-flex flex-justify-between width-full py-4 border-bottom color-border-muted public source')
+        mentah = soup.find_all('div', class_='col-10 col-lg-9 d-inline-block')
+        hasil = []
+        
+        for block in mentah:
+            namaRepo = "N/A"
+            bahasaRepo = "Not Specified"
 
-    hasil = []
-    for block in mentah:
-        namaRepoE = block.find('a', itemprop='name codeRepository')
-        namaRepo = namaRepoE.get_text(strip=True)
+            namaRepoE = block.find('h3', class_='wb-break-all').find('a')
+            if namaRepoE:
+                namaRepo = namaRepoE.get_text(strip=True)
 
-        statusRepoE = block.find('span', class_='Label Label--secondary v-align-middle ml-1 mb-1')
-        statusRepo = statusRepoE.get_text(strip=True)
+            statusRepoE = block.find('span', class_='Label Label--secondary v-align-middle ml-1 mb-1')
+            if statusRepoE:
+                statusRepo = statusRepoE.get_text(strip=True)
 
-        bahasaRepoE = block.find('span', itemprop='programmingLanguage')
-        bahasaRepo = bahasaRepoE.get_text(strip=True)
+            bahasaRepoE = block.find('span', itemprop='programmingLanguage')
+            if bahasaRepoE:
+                bahasaRepo = bahasaRepoE.get_text(strip=True)
 
-        hasil.append({'Nama Repository' : namaRepo, 'Status' : statusRepo, 'Bahasa' : bahasaRepo})
+            hasil.append({
+                'Nama Repository': namaRepo,
+                'Status': statusRepo,
+                'Bahasa': bahasaRepo
+            })
 
-    data = pd.DataFrame(hasil)
-    data.index = data.index + 1
-    print(tabulate(data, headers='keys', tablefmt='grid'))
+        os.system('cls')
+        data = pd.DataFrame(hasil)
+        data.index = data.index + 1
+        print(tabulate(data, headers='keys', tablefmt='grid'))
+        
+    except requests.exceptions.RequestException as e:
+        print(f"Error saat mengakses GitHub: {e}")
+    except Exception as e:
+        print(f"Terjadi kesalahan: {e}")
+    
     input('TEKAN ENTER UNTUK KEMBALI>>>')
     utama()
 
 def tokopedia():
     os.system('cls')
-    print('=====TOKOPEDIA HARGA SCRAPPING=====')
+    print('=====TOKOPEDIA NAMA SCRAPPING=====')
     namaBarang = input('Masukkan Nama Barang : ')
     namaBarangSpasi = namaBarang.replace(' ', '%20')
     os.system('cls')
-    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0 Safari/537.36"}
     url = f'https://www.tokopedia.com/search?st=&q={namaBarangSpasi}&srp_component_id=02.01.00.00&srp_page_id=&srp_page_title=&navsource='
     respon = requests.get(url, headers=headers)
     soup = BeautifulSoup(respon.text, 'html.parser')
